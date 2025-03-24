@@ -6,14 +6,14 @@ const searchResults = document.getElementById("search-results");
 const themeToggler = document.getElementById("theme-toggler");
 const body = document.body;
 
-async function searchWikipeida(query) {
+async function searchWikipedia(query) {
   const encodedQuery = encodeURIComponent(query);
   const endpoint = `https://en.wikipedia.org/w/api.php?action=query&list=search&prop=info&inprop=url&utf8=&format=json&origin=*&srlimit=10&srsearch=${encodedQuery}`;
 
   const reponse = await fetch(endpoint);
 
   if (!reponse.ok) {
-    throw new Error("Faild to fetch search results form wikipedia API.");
+    throw new Error("Faild to fetch search results from wikipedia API.");
   }
 
   const json = await reponse.json();
@@ -21,13 +21,13 @@ async function searchWikipeida(query) {
 }
 
 function displayResults(results) {
-  // Remove the loading spinner
+  
   searchResults.innerHTML = "";
 
   results.forEach((result) => {
-    const url = `https://en.wikipedia.org/?curid=${results.pageid}`;
+    const url = `https://en.wikipedia.org/?curid=${result.pageid}`;
     const titleLink = `<a href="${url}" target="_blank" rel="noopener">${result.title} </a>`;
-    const urlLink = `<a href="${url} class="result-link" target="_blank" rel="noopener">${url}</a>`;
+    const urlLink = `<a href="${url}" class="result-link" target="_blank" rel="noopener">${url}</a>`;
 
     const resultItme = document.createElement("div");
     resultItme.className = "result-item";
@@ -67,7 +67,7 @@ searchForm.addEventListener("submit", async (e) => {
   }
 });
 
-// Event listener for the theme toggler
+
 themeToggler.addEventListener("click", () => {
   body.classList.toggle("dark-theme");
   if (body.classList.contains("dark-theme")) {
