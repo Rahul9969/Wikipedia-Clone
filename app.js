@@ -10,34 +10,34 @@ async function searchWikipedia(query) {
   const encodedQuery = encodeURIComponent(query);
   const endpoint = `https://en.wikipedia.org/w/api.php?action=query&list=search&prop=info&inprop=url&utf8=&format=json&origin=*&srlimit=10&srsearch=${encodedQuery}`;
 
-  const reponse = await fetch(endpoint);
+  const response = await fetch(endpoint);
 
-  if (!reponse.ok) {
-    throw new Error("Faild to fetch search results from wikipedia API.");
+  if (!response.ok) {
+    throw new Error("Failed to fetch search results from Wikipedia API.");
   }
 
-  const json = await reponse.json();
+  const json = await response.json();
   return json;
 }
 
 function displayResults(results) {
-  
   searchResults.innerHTML = "";
 
   results.forEach((result) => {
+    if (!result.pageid) return;
     const url = `https://en.wikipedia.org/?curid=${result.pageid}`;
-    const titleLink = `<a href="${url}" target="_blank" rel="noopener">${result.title} </a>`;
+    const titleLink = `<a href="${url}" target="_blank" rel="noopener">${result.title}</a>`;
     const urlLink = `<a href="${url}" class="result-link" target="_blank" rel="noopener">${url}</a>`;
 
-    const resultItme = document.createElement("div");
-    resultItme.className = "result-item";
-    resultItme.innerHTML = `
+    const resultItem = document.createElement("div");
+    resultItem.className = "result-item";
+    resultItem.innerHTML = `
         <h3 class="result-title">${titleLink}</h3>
         ${urlLink}
         <p class="result-snippet">${result.snippet}</p>
         `;
 
-    searchResults.appendChild(resultItme);
+    searchResults.appendChild(resultItem);
   });
 }
 
@@ -47,23 +47,23 @@ searchForm.addEventListener("submit", async (e) => {
   const query = searchInput.value.trim();
 
   if (!query) {
-    searchResults.innerHTML = "<p>Please enter a valid search term. </p>";
+    searchResults.innerHTML = "<p>Please enter a valid search term.</p>";
     return;
   }
 
-  searchResults.innerHTML = "<div class='spinner'>Loading ... </div>";
+  searchResults.innerHTML = "<div class='spinner'>Loading ...</div>";
 
   try {
-    const results = await searchWikipeida(query);
+    const results = await searchWikipedia(query);
 
     if (results.query.searchinfo.totalhits === 0) {
-      searchResults.innerHTML = "<p>No results found. </p>";
+      searchResults.innerHTML = "<p>No results found.</p>";
     } else {
       displayResults(results.query.search);
     }
   } catch (error) {
     console.error(error);
-    searchResults.innerHTML = `<p>An error occured while searching. Please try again later. </p>`;
+    searchResults.innerHTML = "<p>An error occurred while searching. Please try again later.</p>";
   }
 });
 
